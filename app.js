@@ -1,13 +1,17 @@
 async function loadData() {
   try {
-    let res = await fetch('data/collection.json');
-    if (!res.ok) res = await fetch('collection.json');
-    if (!res.ok) res = await fetch('data/collection_basic.json');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    // Essayer d'abord à la racine (cas GitHub Pages upload manuel)
+    let res = await fetch('collection.json');
+    if (!res.ok) res = await fetch('data/collection.json'); // Cas local ou structure dossier respectée
+    if (!res.ok) res = await fetch('data/collection_basic.json'); // Fallback
+    
+    if (!res.ok) throw new Error('Fichier non trouvé (HTTP ' + res.status + ')');
+    
     const json = await res.json();
     return json;
   } catch (e) {
-    document.getElementById('info').textContent = 'Aucune collection trouvée. Lancez « node scripts/fetch_discogs_collection.js <votre_nom_discogs> » après avoir défini DISCOGS_USER_TOKEN.';
+    document.getElementById('loading').textContent = 'Erreur: ' + e.message;
+    document.getElementById('info').textContent = 'Impossible de charger la collection. Vérifiez que collection.json est bien à la racine du site.';
     return { releases: [] };
   }
 }
@@ -502,7 +506,13 @@ function renderRecentFrom(items) {
 
 (async function init() {
   const data = await loadData();
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+  
   const items = (data.releases || []).map((r) => r);
+  if (items.length === 0 && !document.getElementById('info').textContent) {
+     document.getElementById('info').textContent = 'Collection vide ou format incorrect.';
+  }
   renderFilters(items);
   attachHandlers({ items });
 })();
