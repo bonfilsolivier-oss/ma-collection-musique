@@ -1,0 +1,45 @@
+# GUIDE : METTRE VOTRE SITE SUR INTERNET (POUR QU'IL MARCHE PC ÉTEINT)
+
+Pour que votre site fonctionne même quand votre ordinateur est éteint, il faut le déplacer sur "GitHub" (un hébergeur gratuit et fiable).
+
+Voici la procédure pas à pas :
+
+### ÉTAPE 1 : CRÉER UN COMPTE GITHUB (Si vous n'en avez pas)
+1. Allez sur https://github.com/
+2. Cliquez sur "Sign Up" et créez un compte (c'est gratuit).
+
+### ÉTAPE 2 : CRÉER LE PROJET EN LIGNE
+1. Une fois connecté, cliquez sur le bouton "+" en haut à droite -> "New repository".
+2. Nom du projet : `ma-collection-musique`
+3. Cochez "Public".
+4. Cliquez sur "Create repository".
+
+### ÉTAPE 3 : ENVOYER VOS FICHIERS
+1. Sur la page de votre nouveau projet, cliquez sur le lien "uploading an existing file".
+2. Faites glisser TOUS les fichiers de votre dossier `collection musique` dans la fenêtre.
+   (Assurez-vous d'inclure les dossiers `web`, `scripts`, `.github`, `data`...).
+   *Astuce : Vous ne pourrez peut-être pas tout glisser d'un coup si c'est trop gros. Commencez par les dossiers importants.*
+3. Cliquez sur "Commit changes".
+
+### ÉTAPE 4 : ACTIVER LE SITE (PAGES)
+1. Dans votre projet GitHub, allez dans l'onglet **Settings**.
+2. Dans le menu à gauche, cliquez sur **Pages**.
+3. Sous "Build and deployment", choisissez "Deploy from a branch".
+4. Sous "Branch", sélectionnez `main` (ou `master`) et le dossier `/` (root).
+5. Cliquez sur **Save**.
+   -> GitHub va vous donner un lien (ex: `https://bonfilsolivier.github.io/ma-collection-musique/`). C'est votre nouveau lien permanent !
+
+### ÉTAPE 5 : ACTIVER LA MISE À JOUR AUTOMATIQUE
+Pour que le site récupère les nouveaux disques tout seul chaque nuit :
+1. Allez dans l'onglet **Settings** du projet.
+2. Dans le menu à gauche, tout en bas, cliquez sur **Secrets and variables** > **Actions**.
+3. Cliquez sur le bouton vert **New repository secret**.
+4. Remplissez comme suit :
+   - Name : `DISCOGS_TOKEN`
+   - Secret : `ZAbgnwfmPbyTqYqOfXbMvLdYyWQmNzXHzTdeDqfT`
+5. Cliquez sur **Add secret**.
+
+C'est fini !
+- Votre site sera accessible 24h/24 sur le lien GitHub Pages.
+- La liste se mettra à jour toutes les nuits vers 3h du matin.
+- Vous n'avez plus besoin de laisser votre PC allumé.
