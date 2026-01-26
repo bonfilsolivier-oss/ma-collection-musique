@@ -12,13 +12,6 @@
         <img id="ownerPhoto" src="me.jpg" alt="Olivier" onerror="this.style.display='none'" />
         <h1>Collection Olivier</h1>
       </div>
-      <div id="network" style="margin:8px 0;">
-        <span id="ipInfo">Accès réseau: en cours…</span>
-        <a id="ipLink" href="#" style="margin-left:8px; display:none;">Ouvrir</a>
-        <img id="qr" alt="QR" style="vertical-align:middle; margin-left:12px; display:none; width:128px; height:128px;" />
-        <button id="fwBtn" style="margin-left:12px;">Autoriser accès réseau</button>
-        <span id="fwMsg" style="margin-left:8px;"></span>
-      </div>
       <div class="controls">
         <input id="search" type="search" placeholder="Recherche titre, artiste, label…" />
         <select id="genre"><option value="">Tous genres</option></select>
@@ -62,35 +55,6 @@
       <div id="recent" class="recent" hidden></div>
       <div id="grid" class="grid"></div>
     </main>
-    <script src="/app.js"></script>
+    <script src="app.js"></script>
   </body>
-  <script>
-    (async () => {
-      try {
-        const r = await fetch('/ip.json', { cache: 'no-store' });
-        const j = await r.json();
-        const ipInfo = document.getElementById('ipInfo');
-        const ipLink = document.getElementById('ipLink');
-        const qr = document.getElementById('qr');
-        ipInfo.textContent = 'Accès réseau: ' + (j.url || 'indisponible');
-        if (j.url) {
-          ipLink.href = j.url;
-          ipLink.style.display = 'inline';
-          const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(j.url);
-          qr.src = qrUrl;
-          qr.style.display = 'inline';
-        }
-      } catch {}
-      const fwBtn = document.getElementById('fwBtn');
-      const fwMsg = document.getElementById('fwMsg');
-      fwBtn.onclick = async () => {
-        fwMsg.textContent = 'Demande envoyée…';
-        try {
-          const r = await fetch('/authorize-firewall', { method: 'POST' });
-          if (r.ok) { fwMsg.textContent = 'Confirmez la fenêtre UAC pour autoriser.'; }
-          else { fwMsg.textContent = 'Échec de la demande.'; }
-        } catch { fwMsg.textContent = 'Erreur de connexion.'; }
-      };
-    })();
-  </script>
 </html>
