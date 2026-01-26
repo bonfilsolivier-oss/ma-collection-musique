@@ -19,8 +19,11 @@ async function loadData() {
     const json = await res.json();
     return json;
   } catch (e) {
-    document.getElementById('loading').textContent = 'Erreur: ' + e.message;
-    document.getElementById('info').textContent = 'Impossible de charger la collection. Vérifiez que collection.json est bien à la racine du site.';
+    const loading = document.getElementById('loading');
+    const info = document.getElementById('info');
+    if (loading) loading.textContent = 'Erreur: ' + e.message;
+    if (info) info.textContent = 'Impossible de charger la collection. Vérifiez que collection.json est bien à la racine du site. Détail: ' + e.message;
+    console.error(e);
     return { releases: [] };
   }
 }
