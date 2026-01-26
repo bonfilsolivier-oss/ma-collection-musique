@@ -21,8 +21,11 @@ async function loadData() {
   } catch (e) {
     const loading = document.getElementById('loading');
     const info = document.getElementById('info');
-    if (loading) loading.textContent = 'Erreur: ' + e.message;
-    if (info) info.textContent = 'Impossible de charger la collection. Vérifiez que collection.json est bien à la racine du site. Détail: ' + e.message;
+    const diag = document.getElementById('diagnostic');
+    const msg = 'Erreur loadData: ' + e.message;
+    if (loading) loading.textContent = msg;
+    if (info) info.textContent = msg;
+    if (diag) diag.innerHTML += '<br>' + msg;
     console.error(e);
     return { releases: [] };
   }
@@ -538,18 +541,31 @@ function renderRecentFrom(items) {
   const items = (data.releases || []).map((r) => r);
   
   if (items.length === 0) {
-     info.textContent = 'Collection vide (0 éléments trouvés dans le fichier).';
-     info.style.color = 'orange';
-  } else {
-     // Debug info temporaire
-     const debugMsg = document.createElement('div');
-     debugMsg.style.color = '#888';
-     debugMsg.style.fontSize = '0.8em';
-     debugMsg.style.marginBottom = '10px';
-     debugMsg.textContent = `Succès : ${items.length} albums chargés. Affichage...`;
-     document.querySelector('main').insertBefore(debugMsg, document.getElementById('grid'));
-  }
-  
-  renderFilters(items);
-  attachHandlers({ items });
+      info.textContent = 'Collection vide (0 éléments trouvés dans le fichier).';
+      info.style.color = 'orange';
+   } else {
+      // Debug info temporaire
+      const debugMsg = document.createElement('div');
+      debugMsg.style.color = '#888';
+      debugMsg.style.fontSize = '0.8em';
+      debugMsg.style.marginBottom = '10px';
+      debugMsg.textContent = `Succès : ${items.length} albums chargés. Affichage...`;
+      const diag = document.getElementById('diagnostic');
+      if (diag) diag.innerHTML += '<br>Succès: ' + items.length + ' albums trouvés.';
+      document.querySelector('main').insertBefore(debugMsg, document.getElementById('grid'));
+   }
+   
+   // Optimisation : rendu progressif pour ne pas bloquer le navigateur
+   if (items.length > 100) {
+       render(items.slice(0, 50)); // Affiche les 50 premiers tout de suite
+       setTimeout(() => {
+           render(items); // Affiche tout le reste après un court instant
+           if (document.getElementById('diagnostic')) document.getElementById('diagnostic').style.display = 'none'; // Cache le diag si tout va bien
+       }, 100);
+   } else {
+       render(items);
+       if (document.getElementById('diagnostic')) document.getElementById('diagnostic').style.display = 'none';
+   }
+   
+   attachHandlers({ items });
 })();
