@@ -1,9 +1,8 @@
 async function loadData() {
   try {
     let res = await fetch('data/collection.json');
-    if (!res.ok) {
-      res = await fetch('data/collection_basic.json');
-    }
+    if (!res.ok) res = await fetch('collection.json');
+    if (!res.ok) res = await fetch('data/collection_basic.json');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     return json;
