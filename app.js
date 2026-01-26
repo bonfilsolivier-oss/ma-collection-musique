@@ -1,9 +1,18 @@
 async function loadData() {
   try {
     // Essayer d'abord à la racine (cas GitHub Pages upload manuel)
-    let res = await fetch('collection.json');
-    if (!res.ok) res = await fetch('data/collection.json'); // Cas local ou structure dossier respectée
-    if (!res.ok) res = await fetch('data/collection_basic.json'); // Fallback
+    // Ajout d'un timestamp pour éviter le cache
+    const ts = Date.now();
+    let res = await fetch('collection.json?t=' + ts);
+    
+    if (!res.ok) {
+        console.log('Echec racine, essai data/');
+        res = await fetch('data/collection.json?t=' + ts); // Cas local ou structure dossier respectée
+    }
+    if (!res.ok) {
+        console.log('Echec data/, essai basic');
+        res = await fetch('data/collection_basic.json?t=' + ts); // Fallback
+    }
     
     if (!res.ok) throw new Error('Fichier non trouvé (HTTP ' + res.status + ')');
     
@@ -505,14 +514,39 @@ function renderRecentFrom(items) {
 }
 
 (async function init() {
-  const data = await loadData();
   const loading = document.getElementById('loading');
+  const info = document.getElementById('info');
+  
+  if (loading) loading.textContent = 'Chargement en cours... (JS démarré)';
+  
+  const data = await loadData();
+  
   if (loading) loading.style.display = 'none';
   
-  const items = (data.releases || []).map((r) => r);
-  if (items.length === 0 && !document.getElementById('info').textContent) {
-     document.getElementById('info').textContent = 'Collection vide ou format incorrect.';
+  if (!data || !data.releases) {
+      if (loading) {
+          loading.style.display = 'block';
+          loading.textContent = 'Erreur critique : Données invalides (data ou data.releases manquant)';
+          loading.style.color = 'red';
+      }
+      return;
   }
+  
+  const items = (data.releases || []).map((r) => r);
+  
+  if (items.length === 0) {
+     info.textContent = 'Collection vide (0 éléments trouvés dans le fichier).';
+     info.style.color = 'orange';
+  } else {
+     // Debug info temporaire
+     const debugMsg = document.createElement('div');
+     debugMsg.style.color = '#888';
+     debugMsg.style.fontSize = '0.8em';
+     debugMsg.style.marginBottom = '10px';
+     debugMsg.textContent = `Succès : ${items.length} albums chargés. Affichage...`;
+     document.querySelector('main').insertBefore(debugMsg, document.getElementById('grid'));
+  }
+  
   renderFilters(items);
   attachHandlers({ items });
 })();
