@@ -543,16 +543,6 @@ function renderRecentFrom(items) {
   if (items.length === 0) {
       info.textContent = 'Collection vide (0 éléments trouvés dans le fichier).';
       info.style.color = 'orange';
-   } else {
-      // Debug info temporaire
-      const debugMsg = document.createElement('div');
-      debugMsg.style.color = '#888';
-      debugMsg.style.fontSize = '0.8em';
-      debugMsg.style.marginBottom = '10px';
-      debugMsg.textContent = `Succès : ${items.length} albums chargés. Affichage...`;
-      const diag = document.getElementById('diagnostic');
-      if (diag) diag.innerHTML += '<br>Succès: ' + items.length + ' albums trouvés.';
-      document.querySelector('main').insertBefore(debugMsg, document.getElementById('grid'));
    }
    
    // Optimisation : rendu progressif pour ne pas bloquer le navigateur
@@ -560,11 +550,9 @@ function renderRecentFrom(items) {
        render(items.slice(0, 50)); // Affiche les 50 premiers tout de suite
        setTimeout(() => {
            render(items); // Affiche tout le reste après un court instant
-           if (document.getElementById('diagnostic')) document.getElementById('diagnostic').style.display = 'none'; // Cache le diag si tout va bien
        }, 100);
    } else {
        render(items);
-       if (document.getElementById('diagnostic')) document.getElementById('diagnostic').style.display = 'none';
    }
    
    attachHandlers({ items });

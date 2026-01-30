@@ -50,51 +50,12 @@
       </div>
     </header>
     <main>
-      <div id="diagnostic" style="background: #330000; color: white; padding: 10px; margin-bottom: 10px; border: 1px solid red;">
-        État du diagnostic : Initialisation...
-      </div>
       <div id="loading" style="text-align:center; padding:20px; font-size:1.2em;">Chargement de la collection...</div>
       <div id="info" class="info"></div>
       <div id="stats" class="stats" hidden></div>
       <div id="recent" class="recent" hidden></div>
       <div id="grid" class="grid"></div>
     </main>
-    <script>
-      (function() {
-        const diag = document.getElementById('diagnostic');
-        function log(msg) {
-          diag.innerHTML += '<br>' + msg;
-          console.log('[Diag] ' + msg);
-        }
-        
-        window.onerror = function(msg, url, line) {
-          log('ERREUR GLOBALE: ' + msg + ' (' + url + ':' + line + ')');
-          return false;
-        };
-
-        log('Page chargée. Vérification de app.js...');
-        
-        // Vérifier si app.js est chargé après 2 secondes
-        setTimeout(() => {
-          if (typeof loadData === 'undefined') {
-            log('ERREUR: app.js ne semble pas avoir été chargé !');
-          } else {
-            log('OK: app.js est présent.');
-          }
-        }, 2000);
-        
-        // Test fetch direct
-        fetch('collection.json').then(r => {
-            log('Test fetch collection.json: ' + r.status + ' ' + r.statusText);
-            if (!r.ok) {
-                 fetch('data/collection.json').then(r2 => {
-                     log('Test fetch data/collection.json: ' + r2.status + ' ' + r2.statusText);
-                 }).catch(e => log('Exception fetch data/: ' + e));
-            }
-        }).catch(e => log('Exception fetch root: ' + e));
-        
-      })();
-    </script>
     <script src="app.js"></script>
   </body>
 </html>
