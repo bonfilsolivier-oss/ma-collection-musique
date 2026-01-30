@@ -546,14 +546,11 @@ function renderRecentFrom(items) {
    }
    
    // Optimisation : rendu progressif pour ne pas bloquer le navigateur
-   if (items.length > 100) {
-       render(items.slice(0, 50)); // Affiche les 50 premiers tout de suite
-       setTimeout(() => {
-           render(items); // Affiche tout le reste après un court instant
-       }, 100);
-   } else {
-       render(items);
-   }
+   // Sur mobile, 6500 items font crasher la page. On limite à 50 au démarrage.
+   render(items.slice(0, 50));
+   
+   // On met à jour le texte d'info pour rassurer l'utilisateur
+   info.textContent = `50 affichés sur ${items.length} (Total chargé)`;
    
    attachHandlers({ items });
 })();
