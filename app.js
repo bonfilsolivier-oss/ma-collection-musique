@@ -1,31 +1,22 @@
 async function loadData() {
   try {
-    // Essayer d'abord à la racine (cas GitHub Pages upload manuel)
-    // Ajout d'un timestamp pour éviter le cache
     const ts = Date.now();
+    // Essai racine
     let res = await fetch('collection.json?t=' + ts);
     
     if (!res.ok) {
-        console.log('Echec racine, essai data/');
-        res = await fetch('data/collection.json?t=' + ts); // Cas local ou structure dossier respectée
-    }
-    if (!res.ok) {
-        console.log('Echec data/, essai basic');
-        res = await fetch('data/collection_basic.json?t=' + ts); // Fallback
+        // Fallback data/
+        res = await fetch('data/collection.json?t=' + ts);
     }
     
-    if (!res.ok) throw new Error('Fichier non trouvé (HTTP ' + res.status + ')');
+    if (!res.ok) throw new Error('Impossible de charger le fichier JSON');
     
     const json = await res.json();
     return json;
   } catch (e) {
     const loading = document.getElementById('loading');
-    const info = document.getElementById('info');
-    const diag = document.getElementById('diagnostic');
-    const msg = 'Erreur loadData: ' + e.message;
+    const msg = 'Erreur: ' + e.message;
     if (loading) loading.textContent = msg;
-    if (info) info.textContent = msg;
-    if (diag) diag.innerHTML += '<br>' + msg;
     console.error(e);
     return { releases: [] };
   }
